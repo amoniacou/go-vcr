@@ -26,6 +26,7 @@ package cassette
 
 import (
 	"bytes"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -174,6 +175,15 @@ func (i *Interaction) GetHTTPResponse() (*http.Response, error) {
 		return nil, err
 	}
 
+	var bodyReader io.Reader
+	decodedBody, err := base64.StdEncoding.DecodeString(i.Response.Body)
+	if err != nil {
+		// If base64 decoding fails, assume it's a plain string
+		bodyReader = strings.NewReader(i.Response.Body)
+	} else {
+		bodyReader = bytes.NewReader(decodedBody)
+	}
+
 	resp := &http.Response{
 		Status:           i.Response.Status,
 		StatusCode:       i.Response.Code,
@@ -184,7 +194,7 @@ func (i *Interaction) GetHTTPResponse() (*http.Response, error) {
 		Trailer:          i.Response.Trailer,
 		ContentLength:    i.Response.ContentLength,
 		Uncompressed:     i.Response.Uncompressed,
-		Body:             io.NopCloser(strings.NewReader(i.Response.Body)),
+		Body:             io.NopCloser(bodyReader),
 		Header:           i.Response.Headers,
 		Close:            true,
 		Request:          req,

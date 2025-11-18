@@ -1,6 +1,7 @@
 package cassette
 
 import (
+	"encoding/base64"
 	"fmt"
 	"maps"
 	"net/http"
@@ -20,7 +21,7 @@ var DefaultReplayAssertFunc ReplayAssertFunc = func(t *testing.T, expected *Inte
 		t.Errorf("status code does not match: expected=%d actual=%d", expected.Response.Code, actual.Result().StatusCode)
 	}
 
-	if expected.Response.Body != actual.Body.String() {
+	if expected.Response.Body != base64.StdEncoding.EncodeToString(actual.Body.Bytes()) {
 		t.Errorf("body does not match: expected=%s actual=%s", expected.Response.Body, actual.Body.String())
 	}
 

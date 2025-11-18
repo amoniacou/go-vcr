@@ -21,7 +21,7 @@ interactions:
         proto_major: 1
         proto_minor: 1
         content_length: -1
-        body: OK
+        body: T0s=
         headers:
             Content-Type:
                 - text/plain; charset=utf-8
@@ -53,9 +53,7 @@ interactions:
         proto_major: 1
         proto_minor: 1
         content_length: -1
-        body: |-
-            query=example
-            OK
+        body: cXVlcnk9ZXhhbXBsZQpPSw==
         headers:
             Content-Type:
                 - text/plain; charset=utf-8
@@ -92,7 +90,7 @@ interactions:
         proto_major: 1
         proto_minor: 1
         content_length: -1
-        body: key=value
+        body: a2V5PXZhbHVl
         headers:
             Content-Type:
                 - text/plain; charset=utf-8
@@ -126,7 +124,7 @@ interactions:
         proto_major: 1
         proto_minor: 1
         content_length: -1
-        body: '{"key":"value"}'
+        body: eyJrZXkiOiJ2YWx1ZSJ9
         headers:
             Content-Type:
                 - text/plain; charset=utf-8

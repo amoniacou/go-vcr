@@ -28,6 +28,7 @@ package recorder
 import (
 	"bufio"
 	"bytes"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -480,8 +481,7 @@ func (rec *Recorder) requestHandler(r *http.Request, serverResponse *http.Respon
 
 	// Perform request to it's original destination and record the interactions
 	// If serverResponse is provided, use it instead
-	var start time.Time
-	start = time.Now()
+	start := time.Now()
 	resp := serverResponse
 	if resp == nil {
 		resp, err = rec.getRoundTripper().RoundTrip(r)
@@ -492,10 +492,14 @@ func (rec *Recorder) requestHandler(r *http.Request, serverResponse *http.Respon
 	requestDuration := time.Since(start)
 	defer resp.Body.Close()
 
+	// Original body
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
+
+	// We need to store Base64 version instead
+	respBase64Body := base64.StdEncoding.EncodeToString(respBody)
 
 	// Add interaction to the cassette
 	interaction := &cassette.Interaction{
@@ -525,7 +529,7 @@ func (rec *Recorder) requestHandler(r *http.Request, serverResponse *http.Respon
 			Trailer:          resp.Trailer,
 			ContentLength:    resp.ContentLength,
 			Uncompressed:     resp.Uncompressed,
-			Body:             string(respBody),
+			Body:             respBase64Body,
 			Headers:          resp.Header,
 			Duration:         requestDuration,
 		},

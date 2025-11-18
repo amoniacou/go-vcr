@@ -28,6 +28,7 @@ package recorder_test
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -1319,8 +1320,9 @@ func TestRecordAndPlaybackWithQueryParams(t *testing.T) {
 		if want := `{"test-post-data":true}`; interaction.Request.Body != want {
 			t.Fatalf("Expected request body %q, got %q", want, interaction.Request.Body)
 		}
-		if want := "Method: POST, foo: bar, baz: true"; interaction.Response.Body != want {
-			t.Fatalf("Expected request body %q, got %q", want, interaction.Request.Body)
+
+		if want := base64.StdEncoding.EncodeToString([]byte(`Method: POST, foo: bar, baz: true`)); interaction.Response.Body != want {
+			t.Fatalf("Expected request body %q, got %q", want, interaction.Response.Body)
 		}
 
 		// Verify query parameters are recorded in the Form field
